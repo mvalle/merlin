@@ -577,7 +577,7 @@ let namespaces = function
 
 exception Found of (Path.t * Cmt_cache.path * Location.t)
 
-let tag namespace p = Typedtrie.tag_path ~namespace (Path.to_string_list p)
+let tag namespace p = Typedtrie.tag_path ~namespace (Path_aux.to_string_list p)
 
 let get_type_name ctxt =
   match ctxt with
@@ -588,7 +588,7 @@ let get_type_name ctxt =
     | Types.Tvariant _ | Types.Tunivar _ | Types.Tpoly _ | Types.Tpackage _ ->
       raise Not_found
     | Types.Tconstr (path,_,_) ->
-      Longident.parse (String.concat ~sep:"." (Path.to_string_list path))
+      Longident.parse (String.concat ~sep:"." (Path_aux.to_string_list path))
     end
   | _ -> raise Not_found
 
@@ -659,7 +659,7 @@ let locate ~config ~ml_or_mli ~path ~lazy_trie ~pos ~str_ident loc =
 
 (* Only used to retrieve documentation *)
 let from_completion_entry ~config ~lazy_trie ~pos (namespace, path, loc) =
-  let path_lst  = Path.to_string_list path in
+  let path_lst  = Path_aux.to_string_list path in
   let str_ident = String.concat ~sep:"." path_lst in
   let tagged_path = tag namespace path in
   locate ~config ~ml_or_mli:`MLI ~path:tagged_path ~pos ~str_ident loc
@@ -836,7 +836,7 @@ let get_doc ~config ~env ~local_defs ~comments ~pos =
     begin match path with
     | `User_input path -> `Builtin path
     | `Completion_entry (_, path, _) ->
-      let str = String.concat ~sep:"." (Path.to_string_list path) in
+      let str = String.concat ~sep:"." (Path_aux.to_string_list path) in
       `Builtin str
     end
   | `File_not_found _
